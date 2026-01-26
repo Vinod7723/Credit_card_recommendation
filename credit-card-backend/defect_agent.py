@@ -12,7 +12,7 @@ db = mongo_client["customer_support"]
 defects_collection = db["defective_products"]
 
 # OpenAI API setup
-OPENAI_API_KEY = "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"
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 openai_client = OpenAI(api_key=OPENAI_API_KEY)
 
 # LangChain LLM setup

@@ -12,6 +12,23 @@
     text-align: center;
     z-index: 1000;
   }
+
+  .track-container .close-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #888;
+    line-height: 1;
+    padding: 0 4px;
+  }
+
+  .track-container .close-button:hover {
+    color: #333;
+  }
   
   .track-form input {
     width: 100%;

@@ -2,9 +2,10 @@
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 import re  # Import regex for parsing
+import os
 
-# Hard-coded API key and model setup
-openai_api_key = "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"
+# API key from environment variable
+openai_api_key = os.environ.get("OPENAI_API_KEY")
 llm = ChatOpenAI(openai_api_key=openai_api_key, model_name="gpt-4o-mini")
 
 

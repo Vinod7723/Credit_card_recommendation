@@ -43,6 +43,8 @@ function App() {
         setShowTrackForm(true); // Display track form modal
       } else if (response.data.message === "cancel_intent") {
         setShowCancelForm(true); // Display cancel form modal
+      } else if (response.data.message === "track_defect_intent") {
+        setShowTrackForm(true); // Display track defect form modal
       } else if (response.data.message === "report_defect_intent") {
         setShowDefectForm(true); // Display defect form modal
       } else if (response.data.message === "report_fraud_intent") {
@@ -54,7 +56,8 @@ function App() {
       }
     } catch (error) {
       console.error("Error processing message:", error.response?.data || error.message);
-      const errorMessage = { type: "bot", text: "There was an error processing your request." };
+      const errorText = error.response?.data?.message || "There was an error processing your request.";
+      const errorMessage = { type: "bot", text: errorText };
       setMessages((prevMessages) => [...prevMessages, errorMessage]);
     } finally {
       setUserInput("");

@@ -4,6 +4,7 @@ from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 import uuid
 import json
+import os
 
 # MongoDB setup
 client = MongoClient("mongodb://localhost:27017/")
@@ -11,7 +12,7 @@ db = client["credit_card_db"]
 orders_collection_name = "orders"
 
 # OpenAI setup
-openai_api_key = "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"  # Replace with your OpenAI API key
+openai_api_key = os.environ.get("OPENAI_API_KEY")
 llm = ChatOpenAI(openai_api_key=openai_api_key, model_name="gpt-4")
 
 # Define LangChain Prompt for Inserting Order

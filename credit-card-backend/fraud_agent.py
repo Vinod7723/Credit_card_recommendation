@@ -1,6 +1,7 @@
 
 # fraud_agent.py
 import uuid
+import os
 from PIL import Image
 import pytesseract
 from pymongo import MongoClient
@@ -13,7 +14,7 @@ db = client["customer_support"]
 fraud_reports_collection = db["fraud_reports"]
 
 # Set up OpenAI model with LangChain
-llm = ChatOpenAI(openai_api_key="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", model_name="gpt-4")
+llm = ChatOpenAI(openai_api_key=os.environ.get("OPENAI_API_KEY"), model_name="gpt-4")
 
 
 

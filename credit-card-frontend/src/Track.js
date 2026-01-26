@@ -27,6 +27,7 @@ function Track({ onClose, onResponse }) {
 
   return (
     <div className="track-container">
+      <button className="close-button" onClick={onClose}>&times;</button>
       <h2>Track Defect Status</h2>
       <form onSubmit={handleTrackSubmit} className="track-form">
         <input

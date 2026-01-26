@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from openai import OpenAI
 import traceback
+import os
 from config import generate_mongo_query
 from models.card_model import find_cards_by_query
 from order_agent import create_order_with_openai, cancel_order_with_openai
@@ -13,7 +14,7 @@ app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # OpenAI API setup
-client = OpenAI(api_key="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")
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 def detect_intent(message):
     """Uses OpenAI's GPT-4 chat model to detect the specific intent of the message."""
@@ -21,15 +22,19 @@ def detect_intent(message):
         response = client.chat.completions.create(
             model="gpt-4",
             messages=[
-                {"role": "system", "content": "You are an assistant that categorizes customer inquiries into one of the following intents: 'track order', 'cancel order', 'report defect', 'report fraud transaction', 'track fraud status', or 'other'."},
-                {"role": "user", "content": f"Please categorize this message into 'track order', 'cancel order', 'report defect', 'report fraud transaction', 'track fraud status', or 'other': '{message}'."}
+                {"role": "system", "content": "You are an assistant that categorizes customer inquiries into one of the following intents: 'greeting', 'track order', 'cancel order', 'report defect', 'track defect', 'report fraud transaction', 'track fraud status', or 'other'. Classify general greetings like hi, hello, hey, good morning, good evening, etc. as 'greeting'. Classify messages about checking or tracking a defect report status as 'track defect'."},
+                {"role": "user", "content": f"Please categorize this message into 'greeting', 'track order', 'cancel order', 'report defect', 'track defect', 'report fraud transaction', 'track fraud status', or 'other': '{message}'."}
             ]
         )
 
         intent_response = response.choices[0].message.content.strip().lower()
         print("Detected intent response:", intent_response)  # For debugging
 
-        if "track order" in intent_response:
+        if "greeting" in intent_response:
+            return "greeting_intent"
+        elif "track defect" in intent_response:
+            return "track_defect_intent"
+        elif "track order" in intent_response:
             return "track_intent"
         elif "cancel order" in intent_response:
             return "cancel_intent"
@@ -55,10 +60,14 @@ def recommend():
         intent = detect_intent(message)
 
         # Handle specific intents
-        if intent == "track_intent":
+        if intent == "greeting_intent":
+            return jsonify({"message": "Hello! Welcome to the Credit Card Recommendation System. I can help you with:\n- Recommending credit cards\n- Creating or canceling orders\n- Reporting defects or fraud\nHow can I assist you today?"}), 200
+        elif intent == "track_intent":
             return jsonify({"message": "track_intent"}), 200
         elif intent == "cancel_intent":
             return jsonify({"message": "cancel_intent"}), 200
+        elif intent == "track_defect_intent":
+            return jsonify({"message": "track_defect_intent"}), 200
         elif intent == "report_defect_intent":
             return jsonify({"message": "report_defect_intent"}), 200
         elif intent == "report_fraud_intent":
