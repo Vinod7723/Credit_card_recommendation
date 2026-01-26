@@ -1,0 +1,20 @@
+{
+  "name": "credit-card-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "autogen": "^0.0.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "langchain": "^0.3.5",
+    "mongoose": "^8.8.0",
+    "openai": "^4.70.2"
+  }
+}

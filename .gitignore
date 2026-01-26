@@ -1,0 +1,43 @@
+# Documentation files (exclude from GitHub)
+DEMO_QUICK_REFERENCE.md
+FINOPS_GUIDE.md
+PRESENTATION_SLIDES_GUIDE.md
+TECHNICAL_DOCUMENTATION.md
+
+# Large video files
+*.mp4
+*.mp4.zip
+
+# PowerPoint presentations
+*.pptx
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+.env.production

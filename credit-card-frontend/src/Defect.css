@@ -1,0 +1,101 @@
+/* src/Defect.css */
+
+/* Modal background styling */
+.defect-report-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  /* Defect form container styling */
+  .defect-report-form {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+  }
+  
+  /* Form header styling */
+  .defect-report-form h2 {
+    margin-bottom: 1.5rem;
+    color: #333;
+    font-size: 1.5rem;
+  }
+  
+  /* Form input field styling */
+  .defect-report-form input[type="text"],
+  .defect-report-form textarea,
+  .defect-report-form input[type="file"] {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  
+  /* File input label styling */
+  .defect-report-form input[type="file"] {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+  
+  /* Form textarea styling */
+  .defect-report-form textarea {
+    height: 80px;
+    resize: vertical;
+  }
+  
+  /* Submit button styling */
+  .defect-report-form button[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  
+  .defect-report-form button[type="submit"]:hover {
+    background-color: #45a049;
+  }
+  
+  /* Close button styling */
+  .close-btn {
+    background-color: #f44336;
+    color: white;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+  }
+  
+  .close-btn:hover {
+    background-color: #d32f2f;
+  }
+  
+  /* Tracking ID display */
+  .defect-report-form p {
+    font-size: 0.9rem;
+    color: #333;
+    margin-top: 1rem;
+  }
+  
