@@ -38,6 +38,7 @@ jobs:
         with:
           python-version: '3.12'
           cache: 'pip'
+          cache-dependency-path: './credit-card-backend/requirements.txt'
 
       - name: Install dependencies
         working-directory: ./credit-card-backend
@@ -50,14 +51,14 @@ jobs:
         working-directory: ./credit-card-backend
         run: |
           # Stop the build if there are Python syntax errors or undefined names
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude=venv,__pycache__,node_modules
           # Exit-zero treats all errors as warnings
-          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics --exclude=venv,__pycache__,node_modules
 
       - name: Check code formatting
         working-directory: ./credit-card-backend
         run: |
-          black --check .
+          black --check . --exclude='/(venv|__pycache__|node_modules)/'
 
       - name: Run tests
         working-directory: ./credit-card-backend
@@ -122,6 +123,7 @@ jobs:
 
       - name: Scan image for vulnerabilities
         uses: aquasecurity/trivy-action@master
+        id: trivy-scan
         continue-on-error: true
         with:
           image-ref: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
@@ -130,7 +132,7 @@ jobs:
 
       - name: Upload Trivy results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
-        if: always()
+        if: always() && hashFiles('trivy-results.sarif') != ''
         continue-on-error: true
         with:
           sarif_file: 'trivy-results.sarif'
