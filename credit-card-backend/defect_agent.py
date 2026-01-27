@@ -64,19 +64,39 @@ def analyze_defect_image(image):
         # Save the image temporarily
         temp_image_path = "temp_image.png"
         image.save(temp_image_path, format="PNG")
-        
+
+        import base64
         with open(temp_image_path, "rb") as f:
-            # Send image to GPT-4 and get response
-            response = openai.Image.create(
-                file=f,
-                model="gpt-4-vision"
-            )
+            image_data = base64.b64encode(f.read()).decode('utf-8')
+
+        # Send image to GPT-4 Vision and get response
+        response = openai_client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Analyze this product image for defects. Describe any visible damage, scratches, breaks, or quality issues in detail."
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/png;base64,{image_data}"
+                            }
+                        }
+                    ]
+                }
+            ],
+            max_tokens=300
+        )
 
         # Print the raw response from OpenAI for debugging
         print("Raw OpenAI Image Analysis Response:", response)
 
         # Extract textual analysis from GPT-4's response
-        image_analysis = response['data'][0]['text']
+        image_analysis = response.choices[0].message.content
 
         # Clean up temporary image file
         os.remove(temp_image_path)
