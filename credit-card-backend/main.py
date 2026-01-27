@@ -235,7 +235,7 @@ def track_fraud_route(tracking_id):
         return jsonify({"message": "Error tracking the fraud report"}), 500
 
 
-@app.route("/health", methods=["GET"])
+@app.route("/api/health", methods=["GET"])
 def health_check():
     """Health check endpoint for container orchestration."""
     return jsonify({"status": "healthy", "service": "credit-card-backend"}), 200
