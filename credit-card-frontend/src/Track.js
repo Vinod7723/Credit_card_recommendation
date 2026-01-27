@@ -1,6 +1,7 @@
 // src/Track.js
 import React, { useState } from "react";
 import axios from "axios";
+import API_BASE_URL from "./config";
 import "./Track.css"; // Import CSS for styling
 
 function Track({ onClose, onResponse }) {
@@ -16,7 +17,7 @@ function Track({ onClose, onResponse }) {
     setError(null);   // Reset error
 
     try {
-      const response = await axios.get(`http://localhost:5001/api/track_defect/${trackingId}`);
+      const response = await axios.get(`${API_BASE_URL}/api/track_defect/${trackingId}`);
       setStatus(response.data);  // Set status based on API response
       onResponse(response.data); // Send response back to App.js for chat display
       onClose(); // Close the track form after submitting

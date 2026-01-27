@@ -3,9 +3,11 @@ import React, { useState } from "react";
 import axios from "axios";
 import ChatMessage from "./ChatMessage";
 import Defect from "./Defect"; // Import Defect component
-import Track from "./Track"; // Import Track component
+import Track from "./Track"; // Import Track component for defect tracking
+import TrackOrder from "./TrackOrder"; // Import TrackOrder component for order tracking
 import FraudTransaction from "./FraudTransaction"; // Import FraudTransaction component
 import TrackFraud from "./TrackFraud"; // Import TrackFraud component
+import API_BASE_URL from "./config"; // Import API base URL
 import "./App.css";
 
 function App() {
@@ -16,7 +18,8 @@ function App() {
   const [showOrderForm, setShowOrderForm] = useState(false);
   const [showCancelForm, setShowCancelForm] = useState(false);
   const [showDefectForm, setShowDefectForm] = useState(false); // State for defect form
-  const [showTrackForm, setShowTrackForm] = useState(false); // State for track form
+  const [showTrackDefectForm, setShowTrackDefectForm] = useState(false); // State for track defect form
+  const [showTrackOrderForm, setShowTrackOrderForm] = useState(false); // State for track order form
   const [showFraudForm, setShowFraudForm] = useState(false); // State for fraud transaction form
   const [showTrackFraudForm, setShowTrackFraudForm] = useState(false); // State for fraud tracking form
   const [orderDetails, setOrderDetails] = useState({ name: "", address: "", mobile: "", card_name: "" });
@@ -33,24 +36,36 @@ function App() {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:5001/api/recommend", {
+      const response = await axios.post(`${API_BASE_URL}/api/recommend`, {
         message: userInput,
         user_id: userId,
       });
 
       // Handle intent responses from the backend
       if (response.data.message === "track_intent") {
-        setShowTrackForm(true); // Display track form modal
+        setShowTrackOrderForm(true); // Display track order form modal
+        const botMessage = { type: "bot", text: "Please enter your order number to track your order." };
+        setMessages((prevMessages) => [...prevMessages, botMessage]);
       } else if (response.data.message === "cancel_intent") {
         setShowCancelForm(true); // Display cancel form modal
+        const botMessage = { type: "bot", text: "Please enter your order number to cancel your order." };
+        setMessages((prevMessages) => [...prevMessages, botMessage]);
       } else if (response.data.message === "track_defect_intent") {
-        setShowTrackForm(true); // Display track defect form modal
+        setShowTrackDefectForm(true); // Display track defect form modal
+        const botMessage = { type: "bot", text: "Please enter your defect tracking ID." };
+        setMessages((prevMessages) => [...prevMessages, botMessage]);
       } else if (response.data.message === "report_defect_intent") {
         setShowDefectForm(true); // Display defect form modal
+        const botMessage = { type: "bot", text: "Please fill out the defect report form." };
+        setMessages((prevMessages) => [...prevMessages, botMessage]);
       } else if (response.data.message === "report_fraud_intent") {
         setShowFraudForm(true); // Display fraud transaction form modal
+        const botMessage = { type: "bot", text: "Please fill out the fraud report form." };
+        setMessages((prevMessages) => [...prevMessages, botMessage]);
       } else if (response.data.message === "track_fraud_intent") {
         setShowTrackFraudForm(true); // Display fraud tracking form modal
+        const botMessage = { type: "bot", text: "Please enter your fraud report tracking ID." };
+        setMessages((prevMessages) => [...prevMessages, botMessage]);
       } else {
         handleBackendResponse(response);
       }
@@ -77,7 +92,7 @@ function App() {
 
   const handleBuy = (card) => {
     setShowOrderForm(true);
-    setOrderDetails((prevDetails) => ({ ...prevDetails, card_name: card.card_name }));
+    setOrderDetails((prevDetails) => ({ ...prevDetails, card_name: card.name }));
   };
 
   const handleOrderFormChange = (e) => {
@@ -89,19 +104,22 @@ function App() {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:5001/api/create_order", {
+      const response = await axios.post(`${API_BASE_URL}/api/create_order`, {
         ...orderDetails,
         user_id: userId,
       });
       handleBackendResponse(response);
       setShowOrderForm(false);
+      setOrderDetails({ name: "", address: "", mobile: "", card_name: "" });
     } catch (error) {
       console.error("Error creating order:", error);
-      const errorMessage = { type: "bot", text: "There was an error processing your order." };
+      const errorText = error.response?.data?.message || "There was an error processing your order.";
+      const errorMessage = { type: "bot", text: errorText };
       setMessages((prevMessages) => [...prevMessages, errorMessage]);
+      setShowOrderForm(false);
+      setOrderDetails({ name: "", address: "", mobile: "", card_name: "" });
     } finally {
       setLoading(false);
-      setOrderDetails({ name: "", address: "", mobile: "", card_name: "" });
     }
   };
 
@@ -109,26 +127,38 @@ function App() {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:5001/api/cancel_order", {
+      const response = await axios.post(`${API_BASE_URL}/api/cancel_order`, {
         order_number: orderNumber,
       });
       handleBackendResponse(response);
       setShowCancelForm(false);
+      setOrderNumber("");
     } catch (error) {
       console.error("Error canceling order:", error);
-      const errorMessage = { type: "bot", text: "There was an error processing your cancellation request." };
+      const errorText = error.response?.data?.message || "There was an error processing your cancellation request.";
+      const errorMessage = { type: "bot", text: errorText };
       setMessages((prevMessages) => [...prevMessages, errorMessage]);
+      setShowCancelForm(false);
+      setOrderNumber("");
     } finally {
       setLoading(false);
-      setOrderNumber("");  // Reset the cancel form
     }
   };
 
-  // Function to handle track response
-  const handleTrackResponse = (data) => {
+  // Function to handle track order response
+  const handleTrackOrderResponse = (data) => {
     const botMessage = {
       type: "bot",
-      text: `Tracking Info: Description: ${data.description}, Order ID: ${data.orderId}, Decision: ${data.decision}, Message: ${data.message}`
+      text: data.message
+    };
+    setMessages((prevMessages) => [...prevMessages, botMessage]);
+  };
+
+  // Function to handle track defect response
+  const handleTrackDefectResponse = (data) => {
+    const botMessage = {
+      type: "bot",
+      text: `Defect Tracking Info: Description: ${data.description}, Order ID: ${data.orderId}, Decision: ${data.decision}, Message: ${data.message}`
     };
     setMessages((prevMessages) => [...prevMessages, botMessage]);
   };
@@ -215,20 +245,31 @@ function App() {
       )}
 
       {/* Defect Report Form Modal */}
-      {showDefectForm && <Defect onClose={() => setShowDefectForm(false)} />}
+      {showDefectForm && <Defect onClose={() => setShowDefectForm(false)} onResponse={(data) => {
+        const botMessage = { type: "bot", text: `Defect reported successfully. Tracking ID: ${data.trackingId}` };
+        setMessages((prevMessages) => [...prevMessages, botMessage]);
+      }} />}
 
       {/* Track Order Form Modal */}
-      {showTrackForm && (
-        <Track 
-          onClose={() => setShowTrackForm(false)} 
-          onResponse={handleTrackResponse}
+      {showTrackOrderForm && (
+        <TrackOrder
+          onClose={() => setShowTrackOrderForm(false)}
+          onResponse={handleTrackOrderResponse}
+        />
+      )}
+
+      {/* Track Defect Form Modal */}
+      {showTrackDefectForm && (
+        <Track
+          onClose={() => setShowTrackDefectForm(false)}
+          onResponse={handleTrackDefectResponse}
         />
       )}
 
       {/* Fraud Transaction Report Form Modal */}
       {showFraudForm && (
-        <FraudTransaction 
-          onClose={() => setShowFraudForm(false)} 
+        <FraudTransaction
+          onClose={() => setShowFraudForm(false)}
           onResponse={handleFraudTransactionResponse}
         />
       )}

@@ -1,6 +1,7 @@
 // src/TrackFraud.js
 import React, { useState } from "react";
 import axios from "axios";
+import API_BASE_URL from "./config";
 import "./TrackFraud.css";
 
 function TrackFraud({ onClose, onResponse }) {
@@ -19,7 +20,7 @@ function TrackFraud({ onClose, onResponse }) {
     }
 
     try {
-      const response = await axios.get(`http://localhost:5001/api/track_fraud/${trackingId}`);
+      const response = await axios.get(`${API_BASE_URL}/api/track_fraud/${trackingId}`);
       onResponse(response.data);  // Display response in chat
       onClose();  // Close modal after response
     } catch (error) {

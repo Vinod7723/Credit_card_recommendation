@@ -16,25 +16,115 @@
   background-color: #fff;
 }
 
-.card-image {
+.card-tier-banner {
   width: 100%;
-  height: auto;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 0.9em;
+  letter-spacing: 2px;
+  color: #fff;
+}
+
+.tier-bronze {
+  background: linear-gradient(135deg, #cd7f32, #a0522d);
+}
+
+.tier-silver {
+  background: linear-gradient(135deg, #a8a9ad, #71706e);
+}
+
+.tier-gold {
+  background: linear-gradient(135deg, #ffd700, #daa520);
+}
+
+.tier-diamond {
+  background: linear-gradient(135deg, #b9f2ff, #4a90d9);
+  color: #1a1a2e;
 }
 
 .card-details {
   padding: 15px;
-  text-align: center;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .card-details h3 {
-  margin: 0 0 10px;
+  margin: 0 0 4px;
   font-size: 1.2em;
   color: #333;
 }
 
-.card-details p {
-  margin: 5px 0;
-  color: #666;
+.card-issuer {
+  margin: 0 0 8px;
+  color: #888;
+  font-size: 0.85em;
+}
+
+.card-description {
+  margin: 0 0 12px;
+  color: #555;
+  font-size: 0.9em;
+  line-height: 1.4;
+}
+
+.card-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.card-info-item {
+  display: flex;
+  flex-direction: column;
+  background: #f8f9fa;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+.info-label {
+  font-size: 0.75em;
+  color: #888;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.info-value {
+  font-size: 0.95em;
+  color: #333;
+  font-weight: 600;
+}
+
+.card-bonus {
+  margin-bottom: 10px;
+}
+
+.bonus-badge {
+  display: inline-block;
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  margin: 2px 4px 2px 0;
+  font-weight: 500;
+}
+
+.card-benefits {
+  margin-top: 6px;
+}
+
+.card-benefits ul {
+  margin: 4px 0 0;
+  padding-left: 18px;
+}
+
+.card-benefits li {
+  font-size: 0.85em;
+  color: #555;
+  margin-bottom: 2px;
 }
 
 .card-actions {
@@ -47,19 +137,16 @@
 }
 
 .card-actions button {
-  padding: 8px 12px;
+  padding: 8px 20px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-weight: bold;
-}
-
-.card-actions button:first-of-type {
   background-color: #4caf50;
   color: white;
+  font-size: 0.95em;
 }
 
-.card-actions button:last-of-type {
-  background-color: #f44336;
-  color: white;
+.card-actions button:hover {
+  background-color: #43a047;
 }

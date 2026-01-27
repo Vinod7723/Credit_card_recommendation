@@ -1,9 +1,10 @@
 // src/Defect.js
 import React, { useState } from "react";
 import axios from "axios";
+import API_BASE_URL from "./config";
 import "./Defect.css";
 
-function Defect({ onClose }) {
+function Defect({ onClose, onResponse }) {
   const [defectDescription, setDefectDescription] = useState("");
   const [orderId, setOrderId] = useState("");
   const [defectImage, setDefectImage] = useState(null);
@@ -19,13 +20,16 @@ function Defect({ onClose }) {
     formData.append("image", defectImage);
 
     try {
-      const response = await axios.post("http://localhost:5001/api/report_defect", formData);
+      const response = await axios.post(`${API_BASE_URL}/api/report_defect`, formData);
       setTrackingId(response.data.trackingId);
-      alert(`Defect reported successfully. Tracking ID: ${response.data.trackingId}`);
+      onResponse(response.data);
       onClose();
     } catch (error) {
       console.error("Error reporting defect:", error);
-      alert("There was an error reporting the defect.");
+      if (onResponse) {
+        onResponse({ message: "There was an error reporting the defect." });
+      }
+      onClose();
     }
   };
 

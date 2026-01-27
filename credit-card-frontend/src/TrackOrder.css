@@ -1,0 +1,77 @@
+/* src/TrackOrder.css */
+.track-order-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+  width: 350px;
+  text-align: center;
+  z-index: 1000;
+}
+
+.track-order-container .close-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #888;
+  line-height: 1;
+  padding: 0 4px;
+}
+
+.track-order-container .close-button:hover {
+  color: #333;
+}
+
+.track-order-form input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.track-order-form button {
+  width: 100%;
+  padding: 10px;
+  border-radius: 4px;
+  border: none;
+  background-color: #2196F3;
+  color: white;
+  cursor: pointer;
+}
+
+.track-order-form button:hover {
+  background-color: #0b7dda;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.order-details {
+  margin-top: 15px;
+  text-align: left;
+  background-color: #f5f5f5;
+  padding: 15px;
+  border-radius: 4px;
+}
+
+.order-details h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.order-details p {
+  margin: 8px 0;
+  font-size: 14px;
+}

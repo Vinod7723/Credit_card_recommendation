@@ -1,6 +1,7 @@
 // src/FraudTransaction.js
 import React, { useState } from "react";
 import axios from "axios";
+import API_BASE_URL from "./config";
 import "./FraudTransaction.css"; // For styling
 
 function FraudTransaction({ onClose, onResponse }) {
@@ -25,7 +26,7 @@ function FraudTransaction({ onClose, onResponse }) {
     formData.append("ocr_image", ocrImage);
 
     try {
-      const response = await axios.post("http://localhost:5001/api/report_fraud", formData);
+      const response = await axios.post(`${API_BASE_URL}/api/report_fraud`, formData);
       onResponse(response.data);  // Pass response to App.js to display in chat
       onClose();  // Close the modal
     } catch (error) {
