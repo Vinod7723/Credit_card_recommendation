@@ -6,9 +6,10 @@ from langchain_openai import ChatOpenAI
 import uuid
 import os
 
-# MongoDB setup
-mongo_client = MongoClient("mongodb://localhost:27017/")
-db = mongo_client["customer_support"]
+# MongoDB setup - use service name in Kubernetes, localhost for local dev
+mongo_host = os.environ.get("MONGO_HOST", "localhost")
+mongo_client = MongoClient(f"mongodb://{mongo_host}:27017/")
+db = mongo_client["credit_card_assistant"]
 defects_collection = db["defective_products"]
 
 # OpenAI API setup
