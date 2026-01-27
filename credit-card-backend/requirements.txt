@@ -1,0 +1,11 @@
+flask==3.0.3
+flask-cors==6.0.2
+openai==2.15.0
+pymongo==4.16.0
+langchain==1.2.7
+langchain-openai==1.1.7
+pytesseract==0.3.13
+pillow==10.4.0
+gunicorn==21.2.0
+requests==2.32.3
+python-dotenv==1.0.0
