@@ -52,6 +52,8 @@ spec:
               key: OPENAI_API_KEY
         - name: MONGODB_URI
           value: "mongodb://mongodb-service:27017/"
+        - name: MONGO_HOST
+          value: "mongodb-service"
         resources:
           requests:
             memory: "512Mi"

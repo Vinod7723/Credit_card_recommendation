@@ -1,10 +1,12 @@
 # models/card_model.py
 from pymongo import MongoClient
+import os
 
-# Connect to MongoDB
-client = MongoClient("mongodb://localhost:27017/")
+# Connect to MongoDB - use service name in Kubernetes, localhost for local dev
+mongo_host = os.environ.get("MONGO_HOST", "localhost")
+client = MongoClient(f"mongodb://{mongo_host}:27017/")
 db = client["credit_card_assistant"]
-cards_collection = db["credit_cards"]
+cards_collection = db["creditcards"]
 
 
 # Function to execute MongoDB query
