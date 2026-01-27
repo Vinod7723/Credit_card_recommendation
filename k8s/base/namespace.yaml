@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: credit-card-system
+  labels:
+    app: credit-card-recommendation
+    environment: production

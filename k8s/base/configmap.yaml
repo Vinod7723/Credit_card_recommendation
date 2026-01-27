@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: credit-card-system
+data:
+  FLASK_APP: "main.py"
+  FLASK_ENV: "production"
+  PYTHONUNBUFFERED: "1"
+  MONGODB_HOST: "mongodb-service"
+  MONGODB_PORT: "27017"
+  MONGODB_DATABASE: "credit_card_assistant"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+  namespace: credit-card-system
+data:
+  REACT_APP_API_URL: "http://backend-service:5001"
