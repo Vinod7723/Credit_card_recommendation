@@ -34,14 +34,17 @@ decision_prompt = PromptTemplate(
     - "Escalate to Human" if the defect cannot be clearly identified or needs further review.
 
     Respond with the decision and a concise message for the customer.
-    """
+    """,
 )
+
 
 def report_defect(description, order_id, image):
     """Processes the defect report by analyzing the image and making a decision using GPT-4 vision and LangChain."""
     pil_image = Image.open(image).convert("RGB")
     image_analysis = analyze_defect_image(pil_image)  # Get image analysis from GPT-4
-    decision, message = get_decision_with_llm(description, image_analysis)  # Decision by LangChain LLM
+    decision, message = get_decision_with_llm(
+        description, image_analysis
+    )  # Decision by LangChain LLM
 
     # Generate a tracking ID for the defect report
     tracking_id = str(uuid.uuid4().int)[:8]
@@ -52,11 +55,12 @@ def report_defect(description, order_id, image):
         "description": description,
         "orderId": order_id,
         "decision": decision,
-        "message": message
+        "message": message,
     }
     defects_collection.insert_one(defect_record)
 
     return tracking_id
+
 
 def analyze_defect_image(image):
     """Uses OpenAI's GPT-4 with vision capabilities to analyze the defect image and return a description."""
@@ -66,8 +70,9 @@ def analyze_defect_image(image):
         image.save(temp_image_path, format="PNG")
 
         import base64
+
         with open(temp_image_path, "rb") as f:
-            image_data = base64.b64encode(f.read()).decode('utf-8')
+            image_data = base64.b64encode(f.read()).decode("utf-8")
 
         # Send image to GPT-4 Vision and get response
         response = openai_client.chat.completions.create(
@@ -78,18 +83,16 @@ def analyze_defect_image(image):
                     "content": [
                         {
                             "type": "text",
-                            "text": "Analyze this product image for defects. Describe any visible damage, scratches, breaks, or quality issues in detail."
+                            "text": "Analyze this product image for defects. Describe any visible damage, scratches, breaks, or quality issues in detail.",
                         },
                         {
                             "type": "image_url",
-                            "image_url": {
-                                "url": f"data:image/png;base64,{image_data}"
-                            }
-                        }
-                    ]
+                            "image_url": {"url": f"data:image/png;base64,{image_data}"},
+                        },
+                    ],
                 }
             ],
-            max_tokens=300
+            max_tokens=300,
         )
 
         # Print the raw response from OpenAI for debugging
@@ -107,13 +110,16 @@ def analyze_defect_image(image):
         print("Error analyzing defect image:", e)
         return "Image analysis failed. Please review the image manually."
 
+
 def get_decision_with_llm(description, image_analysis):
     """Uses LangChain LLM to make a decision based on image analysis and description."""
     # Set up LangChain LLM chain with the decision prompt
     decision_chain = decision_prompt | llm
 
     # Run the prompt with image analysis and description
-    result = decision_chain.invoke({"image_analysis": image_analysis, "description": description})
+    result = decision_chain.invoke(
+        {"image_analysis": image_analysis, "description": description}
+    )
     response = result.content.strip()
 
     # Determine the decision and message from the LLM response
@@ -127,6 +133,7 @@ def get_decision_with_llm(description, image_analysis):
     message = response  # Use the response as the message for the customer
     return decision, message
 
+
 def track_defect_status(tracking_id):
     """Retrieves the defect status based on the tracking ID."""
     defect = defects_collection.find_one({"trackingId": tracking_id})
@@ -135,7 +142,7 @@ def track_defect_status(tracking_id):
             "description": defect["description"],
             "orderId": defect["orderId"],
             "decision": defect["decision"],
-            "message": defect["message"]
+            "message": defect["message"],
         }
     else:
         return None

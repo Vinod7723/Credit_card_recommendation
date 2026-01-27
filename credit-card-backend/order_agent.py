@@ -36,7 +36,7 @@ Ensure the query is formatted as valid JSON in a dictionary format, like this:
     "order_number": "{order_number}"
 }}
 Only output the JSON dictionary without any additional text.
-"""
+""",
 )
 
 # Define LangChain Prompt for Cancelling Order
@@ -52,8 +52,9 @@ Ensure the query is formatted as valid JSON in a dictionary format, using the ex
     "order_number": "{order_number}"
 }}
 Only output the JSON dictionary without any additional text.
-"""
+""",
 )
+
 
 def ensure_collection_exists():
     """Ensure the orders collection exists in MongoDB."""
@@ -61,6 +62,7 @@ def ensure_collection_exists():
         print("Orders collection does not exist. Creating it now...")
         db.create_collection(orders_collection_name)
         print("Orders collection created successfully.")
+
 
 def create_order_with_openai(details):
     """Generate a MongoDB insert query using OpenAI and execute it."""
@@ -73,15 +75,17 @@ def create_order_with_openai(details):
     insert_chain = insert_prompt | llm
 
     # Generate MongoDB insert query with OpenAI
-    response = insert_chain.invoke({
-        "name": details["name"],
-        "address": details["address"],
-        "mobile": details["mobile"],
-        "card_name": details["card_name"],
-        "order_number": order_number
-    })
+    response = insert_chain.invoke(
+        {
+            "name": details["name"],
+            "address": details["address"],
+            "mobile": details["mobile"],
+            "card_name": details["card_name"],
+            "order_number": order_number,
+        }
+    )
     response = response.content
-    
+
     # Print the response for debugging
     print("Generated Response from OpenAI for Insertion:", response)
 
@@ -89,10 +93,10 @@ def create_order_with_openai(details):
         # Parse response as JSON
         mongo_query = json.loads(response)
         print("Generated MongoDB Insert Query:", mongo_query)
-        
+
         # Execute the insert query
         result = db[orders_collection_name].insert_one(mongo_query)
-        
+
         if result.inserted_id:
             print("Order successfully inserted into MongoDB:", mongo_query)
             return order_number
@@ -106,14 +110,39 @@ def create_order_with_openai(details):
         print("Error generating or executing MongoDB query:", e)
         return None
 
+
 def find_order_by_number(order_number):
     """Check if an order exists in MongoDB by order number and return it."""
+    # Try finding as string first, then as number if not found
     order = db[orders_collection_name].find_one({"order_number": order_number})
+    if not order:
+        # Try as number if the input can be converted to int
+        try:
+            order = db[orders_collection_name].find_one(
+                {"order_number": int(order_number)}
+            )
+        except (ValueError, TypeError):
+            pass
+
     if order:
         print(f"Order found: {order}")
+        # Remove _id field as it's not JSON serializable
+        if "_id" in order:
+            del order["_id"]
+        # Ensure order_number is a string for consistency
+        if "order_number" in order:
+            order["order_number"] = str(order["order_number"])
+        # Add status if not present
+        if "status" not in order:
+            order["status"] = "confirmed"
+        if "timestamp" not in order:
+            from datetime import datetime
+
+            order["timestamp"] = datetime.now().isoformat()
     else:
         print(f"No order found with order number: {order_number}")
     return order
+
 
 def cancel_order_with_openai(order_number):
     """Generate a MongoDB delete query using OpenAI and execute it."""
@@ -123,7 +152,7 @@ def cancel_order_with_openai(order_number):
         return False
     else:
         print(f"Order {order_number} found.")
-    
+
     # Use LangChain modern chain approach
     cancel_chain = cancel_prompt | llm
 
@@ -136,7 +165,7 @@ def cancel_order_with_openai(order_number):
         # Parse response as JSON
         mongo_query = json.loads(response)
         print("Initial Generated MongoDB Delete Query:", mongo_query)
-        
+
         # Check if the query has a top-level "$query" key and extract its content
         if "$query" in mongo_query:
             mongo_query = mongo_query["$query"]
@@ -147,19 +176,28 @@ def cancel_order_with_openai(order_number):
         elif "orderNumber" in mongo_query:
             mongo_query["order_number"] = mongo_query.pop("orderNumber")
 
-        # Ensure `order_number` is a string to match MongoDB's stored data type
+        # Try to delete with string version first
         mongo_query["order_number"] = str(mongo_query["order_number"])
-        
+
         print("Corrected MongoDB Delete Query:", mongo_query)
-        
+
         # Execute the delete query
         result = db[orders_collection_name].delete_one(mongo_query)
-        
+
+        # If not found as string, try as number
+        if result.deleted_count == 0:
+            try:
+                mongo_query["order_number"] = int(order_number)
+                print("Trying delete with int order_number:", mongo_query)
+                result = db[orders_collection_name].delete_one(mongo_query)
+            except (ValueError, TypeError):
+                pass
+
         if result.deleted_count > 0:
             print(f"Order {order_number} successfully deleted from MongoDB.")
             return True
         else:
-            print(f"Order {order_number} not found in MongoDB.")
+            print(f"Order {order_number} not found in MongoDB for deletion.")
             return False
     except json.JSONDecodeError as e:
         print("JSON decode error in generated delete query:", e)

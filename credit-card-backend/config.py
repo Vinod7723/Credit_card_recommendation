@@ -14,16 +14,27 @@ template = """
 You are a MongoDB query generator. Based on a user's message, create a MongoDB query to search for credit cards.
 
 The credit card data has the following fields:
-1. category (e.g., cashback, foodies, travel, lifestyle)
-2. credit_limit (an array of credit limits available for the card, e.g., [500, 1000, 2000, 3000])
-3. benefits (an array of benefits, e.g., ["no annual fee", "cashback on groceries"])
-4. vendor (e.g., Chase, Discover, Bank of America, Wells Fargo)
+1. tier (e.g., "bronze", "silver", "gold", "diamond")
+2. name (e.g., "Chase Starter Bronze", "Chase Rewards Silver")
+3. issuer (e.g., "Chase Bank")
+4. annual_fee (number, e.g., 0, 25, 95, 450)
+5. interest_rate (number, e.g., 19.99, 17.99, 15.99)
+6. credit_limit_min (number, minimum credit limit)
+7. credit_limit_max (number, maximum credit limit)
+8. rewards.cashback_percentage (number, e.g., 0.5, 1, 2, 3)
+9. rewards.bonus_categories (array of objects with "category" and "multiplier", e.g., Travel, Dining, Groceries)
+10. benefits (array of strings, e.g., ["Airport lounge access", "Travel insurance", "Concierge service"])
+11. features (array of strings, e.g., ["Travel perks", "Premium rewards"])
+12. is_active (boolean)
 
 Generate a MongoDB query in JSON format based on the user's request, using the following guidelines:
-- Match the "category" field if specified.
-- Match the "vendor" field if specified.
-- For "credit_limit", use $elemMatch to check if any of the values in the array are greater than or equal to the requested limit.
-- For "benefits", use "$and" with separate "$regex" patterns for each requested benefit, as MongoDB does not allow $regex inside $all.
+- Always include {{"is_active": true}} in the query.
+- Match "tier" if the user mentions a tier level.
+- For travel cards, search for "Travel" in rewards.bonus_categories.category or in features/benefits using $regex.
+- For credit limit requests, use credit_limit_max with $gte.
+- For annual fee preferences, use annual_fee with $lte for "low fee" or $eq: 0 for "no fee".
+- For benefits, use "$regex" with "$options": "i" for case-insensitive matching.
+- If the user request is general (e.g., "recommend a card"), return an empty query {{}} to show all cards.
 
 Respond only with the JSON query format.
 
@@ -35,6 +46,7 @@ prompt = PromptTemplate(input_variables=["query"], template=template)
 # Create a chain using the pipe operator (modern langchain approach)
 chain = prompt | llm
 
+
 # Function to generate MongoDB query using LangChain
 def generate_mongo_query(query):
     try:
@@ -44,7 +56,7 @@ def generate_mongo_query(query):
         print("Raw OpenAI Response:", mongo_query)  # Log the raw response
 
         # Use regex to extract only the JSON object between the ``` markers
-        match = re.search(r'```json\s*({.*})\s*```', mongo_query, re.DOTALL)
+        match = re.search(r"```json\s*({.*})\s*```", mongo_query, re.DOTALL)
         if match:
             mongo_query = match.group(1)
 

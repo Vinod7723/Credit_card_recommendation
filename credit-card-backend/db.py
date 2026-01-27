@@ -8,17 +8,3 @@ db = client.creditCardDB  # Database name
 
 # Collection for cards
 cards_collection = db.cards
-
-
-
-
-
-
-
-
-
-
-
-
-
-

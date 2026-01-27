@@ -3,8 +3,9 @@ from pymongo import MongoClient
 
 # Connect to MongoDB
 client = MongoClient("mongodb://localhost:27017/")
-db = client["creditCardDB"]
-cards_collection = db["cards"]
+db = client["credit_card_assistant"]
+cards_collection = db["credit_cards"]
+
 
 # Function to execute MongoDB query
 def find_cards_by_query(query):
