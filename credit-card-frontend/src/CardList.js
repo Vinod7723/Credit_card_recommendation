@@ -2,6 +2,16 @@
 import React from "react";
 import "./CardList.css";
 
+// Helper function to get credit score category
+function getCreditScoreCategory(score) {
+  if (!score) return "Not specified";
+  if (score >= 800) return "Excellent (800+)";
+  if (score >= 740) return "Very Good (740-799)";
+  if (score >= 670) return "Good (670-739)";
+  if (score >= 580) return "Fair (580-669)";
+  return "Poor (300-579)";
+}
+
 function CardList({ cards, onBuy, onCancel }) {
   return (
     <div className="card-list">
@@ -30,6 +40,10 @@ function CardList({ cards, onBuy, onCancel }) {
               <div className="card-info-item">
                 <span className="info-label">Cashback</span>
                 <span className="info-value">{card.rewards?.cashback_percentage}%</span>
+              </div>
+              <div className="card-info-item credit-score-item">
+                <span className="info-label">Min Credit Score</span>
+                <span className="info-value credit-score-value">{getCreditScoreCategory(card.min_credit_score)}</span>
               </div>
             </div>
             {card.rewards?.bonus_categories?.length > 0 && (

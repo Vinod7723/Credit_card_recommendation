@@ -76,7 +76,7 @@ def recommend():
             return (
                 jsonify(
                     {
-                        "message": "Hello! Welcome to the Credit Card Recommendation System. I can help you with:\n- Recommending credit cards\n- Creating or canceling orders\n- Reporting defects or fraud\nHow can I assist you today?"
+                        "message": "Hello! Welcome to the Credit Card Recommendation System. I can help you with:\n- Recommending credit cards based on your credit score\n- Finding cards for travel, cashback, dining rewards\n- Creating or canceling orders\n- Reporting defects or fraud\n\nTip: Tell me your credit score for personalized recommendations!\nExample: 'Show me travel cards for credit score 720'\n\nHow can I assist you today?"
                     }
                 ),
                 200,

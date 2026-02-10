@@ -84,6 +84,17 @@
   border-radius: 6px;
 }
 
+.credit-score-item {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  border: 1px solid #90caf9;
+}
+
+.credit-score-value {
+  color: #1565c0;
+  font-weight: 700;
+}
+
 .info-label {
   font-size: 0.75em;
   color: #888;
