@@ -26,19 +26,22 @@ The credit card data has the following fields:
 10. benefits (array of strings, e.g., ["Airport lounge access", "Travel insurance", "Concierge service"])
 11. features (array of strings, e.g., ["Travel perks", "Premium rewards"])
 12. is_active (boolean)
-13. min_credit_score (number, minimum credit score required: 300-579 = Poor, 580-669 = Fair, 670-739 = Good, 740-799 = Very Good, 800-850 = Excellent)
+13. min_credit_score (number, minimum credit score required)
+    Credit score ranges: Poor=300-579, Fair=580-669, Good=670-739,
+    Very Good=740-799, Excellent=800-850
 
-Generate a MongoDB query in JSON format based on the user's request, using the following guidelines:
+Generate a MongoDB query in JSON format based on the user's request:
 - Always include {{"is_active": true}} in the query.
 - Match "tier" if the user mentions a tier level.
-- For travel cards, search for "Travel" in rewards.bonus_categories.category or in features/benefits using $regex.
+- For travel cards, search "Travel" in bonus_categories or features using $regex.
 - For credit limit requests, use credit_limit_max with $gte.
-- For annual fee preferences, use annual_fee with $lte for "low fee" or $eq: 0 for "no fee".
+- For annual fee: use $lte for "low fee" or $eq: 0 for "no fee".
 - For benefits, use "$regex" with "$options": "i" for case-insensitive matching.
-- If user mentions their credit score (e.g., "my credit score is 720"), filter cards where min_credit_score is less than or equal to their score using {{"min_credit_score": {{"$lte": 720}}}}.
-- Credit score categories: Poor (300-579), Fair (580-669), Good (670-739), Very Good (740-799), Excellent (800-850).
-- If user says "poor credit" use 579, "fair credit" use 669, "good credit" use 739, "very good credit" use 799, "excellent credit" use 850.
-- If the user request is general (e.g., "recommend a card"), return an empty query {{}} to show all cards.
+- If user mentions credit score (e.g., "score is 720"), filter with
+  {{"min_credit_score": {{"$lte": 720}}}}.
+- Credit categories: Poor=579, Fair=669, Good=739, VeryGood=799, Excellent=850
+- If user says "poor credit" use 579, "fair credit" use 669, etc.
+- For general requests (e.g., "recommend a card"), return {{}} to show all.
 
 Respond only with the JSON query format.
 

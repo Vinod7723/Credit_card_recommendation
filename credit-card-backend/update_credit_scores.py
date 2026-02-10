@@ -16,11 +16,12 @@ cards_collection = db["creditcards"]
 # Diamond: Very Good to Excellent credit (740-850) -> min 740
 
 tier_credit_scores = {
-    "bronze": 300,   # Poor credit acceptable
-    "silver": 580,   # Fair credit required
-    "gold": 670,     # Good credit required
+    "bronze": 300,  # Poor credit acceptable
+    "silver": 580,  # Fair credit required
+    "gold": 670,  # Good credit required
     "diamond": 740,  # Very Good credit required
 }
+
 
 def update_credit_scores():
     """Update all cards with min_credit_score based on their tier"""
@@ -37,20 +38,28 @@ def update_credit_scores():
 
         # Update the card with min_credit_score
         result = cards_collection.update_one(
-            {"_id": card["_id"]},
-            {"$set": {"min_credit_score": min_score}}
+            {"_id": card["_id"]}, {"$set": {"min_credit_score": min_score}}
         )
 
         if result.modified_count > 0:
             updated_count += 1
-            print(f"Updated {card.get('name', 'Unknown')} ({tier}) -> min_credit_score: {min_score}")
+            print(
+                f"Updated {card.get('name', 'Unknown')} ({tier}) -> min_credit_score: {min_score}"
+            )
 
-    print(f"\nUpdate complete! {updated_count} cards updated with credit score requirements.")
+    print(
+        f"\nUpdate complete! {updated_count} cards updated with credit score requirements."
+    )
 
     # Verify the update
     print("\nVerification - Cards with credit scores:")
-    for card in cards_collection.find({}, {"name": 1, "tier": 1, "min_credit_score": 1}):
-        print(f"  {card.get('name')}: {card.get('tier')} tier, min score: {card.get('min_credit_score')}")
+    for card in cards_collection.find(
+        {}, {"name": 1, "tier": 1, "min_credit_score": 1}
+    ):
+        print(
+            f"  {card.get('name')}: {card.get('tier')} tier, min score: {card.get('min_credit_score')}"
+        )
+
 
 if __name__ == "__main__":
     update_credit_scores()
